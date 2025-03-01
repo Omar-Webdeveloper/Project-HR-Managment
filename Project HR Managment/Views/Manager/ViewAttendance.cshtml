@@ -1,0 +1,30 @@
+﻿@model List<Project_HR_Managment.Models.Attendance>
+
+<h2>Employee Attendance</h2>
+
+@if (Model != null && Model.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Punch In</th>
+                <th>Punch Out</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var record in Model)
+            {
+                <tr>
+                    <td>@record.Date</td>
+                    <td>@record.PunchInTime</td>
+                    <td>@record.PunchOutTime</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>@ViewBag.Message</p>
+}

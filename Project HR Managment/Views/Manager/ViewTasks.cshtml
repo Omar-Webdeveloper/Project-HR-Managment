@@ -1,0 +1,34 @@
+﻿@model List<Project_HR_Managment.Models.Task>
+
+<h2>Employee Tasks</h2>
+
+@if (Model != null && Model.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Assigned Date</th>
+                <th>Due Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var task in Model)
+            {
+                <tr>
+                    <td>@task.Name</td>
+                    <td>@task.Description</td>
+                    <td>@task.Status</td>
+                    <td>@task.AssignedDate</td>
+                    <td>@task.DueDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>@ViewBag.Message</p>
+}
