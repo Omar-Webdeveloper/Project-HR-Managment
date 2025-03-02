@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using iTextSharp.text.pdf;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Project_HR_Managment.Models;
 using Rotativa.AspNetCore;
 
@@ -28,7 +30,7 @@ namespace Project_HR_Managment.Controllers
             {
                 // Store manager details in session or TempData if needed
                 HttpContext.Session.SetInt32("ManagerId", existingManager.Id);
-
+                TempData["ManagerId"] = existingManager.Id;
                 // Redirect to the dashboard or manager's homepage
                 return RedirectToAction("Dashboard", new { id = existingManager.Id });
             }
@@ -174,5 +176,109 @@ namespace Project_HR_Managment.Controllers
             return RedirectToAction("Dashboard", new { id = ManagerId });
         }
 
+        //public IActionResult ExportEmployeesAsPdf(int managerId)
+        //{
+        //    var employees = _context.Employees
+        //        .Where(e => e.ManagerId == managerId)
+        //        .Select(e => new
+        //        {
+        //            e.Name,
+        //            e.Email,
+        //            e.Position,
+        //            e.ProfileImage,
+        //            DepartmentName = e.Department != null ? e.Department.Name : "N/A"
+        //        }).ToList();
+
+        //    using (var stream = new MemoryStream())
+        //    {
+        //        PdfWriter writer = new PdfWriter(stream);
+        //        PdfDocument pdf = new PdfDocument(writer);
+        //        Document document = new Document(pdf);
+
+        //        document.Add(new Paragraph("Manager's Employees Report").SetBold().SetFontSize(18));
+        //        document.Add(new Paragraph($"Generated on: {DateTime.Now}\n\n"));
+
+        //        Table table = new Table(4);
+        //        table.AddHeaderCell("Department");
+        //        table.AddHeaderCell("Employee Name");
+        //        table.AddHeaderCell("Position");
+        //        table.AddHeaderCell("Email");
+
+        //        foreach (var employee in employees)
+        //        {
+        //            table.AddCell(employee.DepartmentName);
+        //            table.AddCell(employee.Name ?? "N/A");
+        //            table.AddCell(employee.Position ?? "N/A");
+        //            table.AddCell(employee.Email ?? "N/A");
+        //        }
+
+        //        document.Add(table);
+        //        document.Close();
+
+        //        var pdfBytes = stream.ToArray();
+        //        return File(pdfBytes, "application/pdf", "ManagerEmployees.pdf");
+        //    }
+
+
+        //public IActionResult ExportEmployeesAsPdf(int id)
+        //{
+        //    var employees = _context.Employees
+        //        .Where(e => e.ManagerId == id)
+        //        .Select(e => new EmployeeViewModel
+        //        {
+        //            Name = e.Name,
+        //            Email = e.Email,
+        //            Position = e.Position,
+        //            ProfileImage = e.ProfileImage
+        //        })
+        //        .ToList();
+
+        //    if (employees == null || employees.Count == 0)
+        //    {
+        //        ViewBag.Message = "No employees found for this manager.";
+        //        return View("ViewEmployees", employees);
+        //    }
+
+        //    return new ViewAsPdf("ExportEmployeesAsPdf", employees)
+        //    {
+        //        FileName = "Manager_Employees.pdf"
+        //    };
+        //}
+
+
+
+
+
+
+
+
+
+
+
+
+        public IActionResult ExportEmployeesAsPdf(int id)
+        {
+            var employees = _context.Employees
+                .Where(e => e.ManagerId == id)
+                .Select(e => new
+                {
+                    e.Name,
+                    e.Email,
+                    e.Position,
+                    e.ProfileImage
+                })
+                .ToList();
+
+            //if (employees == null || employees.Count == 0)
+            //{
+            //    ViewBag.Message = "No employees found for this manager.";
+            //    return View("ViewEmployees", employees);
+            //}
+
+            return new ViewAsPdf("ExportEmployeesAsPdf", employees)
+            {
+                FileName = "Manager_Employees.pdf"
+            };
+        }
     }
 }

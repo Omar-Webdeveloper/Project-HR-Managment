@@ -2,12 +2,19 @@
 
 @{
     ViewData["Title"] = "Manager Dashboard";
+    int? managerIdFromTempData = TempData["ManagerId"] as int?;
+
 }
+<button id="downloadPdf" class="btn btn-dark">Download As PDF 📥</button>
+
 
 <h2>Welcome, @ViewBag.ManagerName</h2>
-
+@{}
 @if (Model != null && Model.Count > 0)
 {
+    <a asp-action="ExportEmployeesAsPdf" asp-route-id="@managerIdFromTempData" class="btn btn-primary">
+        Download Manager_Employees as PDF
+    </a>
     <table class="table">
         <thead>
             <tr>
@@ -51,3 +58,21 @@ else
 {
     <p>No employees found under your management.</p>
 }
+<script>
+    document.getElementById('downloadPdf').addEventListener('click', function () {
+        const { jsPDF } = window.jspdf;
+        let doc = new jsPDF();
+
+        html2canvas(document.body).then(canvas => {
+            let imgData = canvas.toDataURL('image/png');
+            let imgWidth = 210; // A4 width in mm
+            let pageHeight = 297; // A4 height in mm
+            let imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+            doc.save('Report.pdf');
+        });
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
